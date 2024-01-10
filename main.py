@@ -93,7 +93,10 @@ def draw_start_table():
     pygame.display.flip()
 
 
-def player_click(x_pos, y_pos):
+def player_click(x_pos: int, y_pos: int):
+    """
+    Allocates the player's chosen dice for the turn.
+    """
     for bone in player_group:
         if bone.rect.topleft[1] == 780:
             bg = Bg('t')
@@ -114,7 +117,13 @@ def player_click(x_pos, y_pos):
                     pygame.display.update([bone.rect, bg.rect])
 
 
-def horizont_turn_1(bone, flag):
+def horizont_turn_1(bone: Bone, flag: str):
+    """
+    First horizontal placement of the bone on the game table.
+    :param bone: Bone
+    :param flag: 'right' | 'left'
+    :return: None
+    """
     bone.rect.center = dict_of_endpoints['end_point_coord'][flag]
     if bone.double:
         if flag == 'left':
@@ -149,7 +158,13 @@ def horizont_turn_1(bone, flag):
         pygame.display.update(new_rect)
 
 
-def horizont_turn_2(bone, flag):
+def horizont_turn_2(bone: Bone, flag: str):
+    """
+    Second horizontal placement of the bone on the game table.
+    :param bone: Bone
+    :param flag: 'right' | 'left'
+    :return: None
+    """
     bone.rect.center = dict_of_endpoints['end_point_coord'][flag]
     if bone.double:
         if flag == 'right':
@@ -184,7 +199,13 @@ def horizont_turn_2(bone, flag):
         pygame.display.update(new_rect)
 
 
-def vertical_turn(bone, flag):
+def vertical_turn(bone: Bone, flag: str):
+    """
+    Vertical placement of the bone on the game table.
+    :param bone: Bone
+    :param flag: 'right' | 'left'
+    :return: None
+    """
     bone.rect.center = dict_of_endpoints['end_point_coord'][flag]
     if bone.double:
         new_image = pygame.transform.rotate(bone.image, 90)
@@ -230,7 +251,12 @@ def vertical_turn(bone, flag):
             dict_of_endpoints['end_point_nominal'][flag] = bone.nominal[0]
 
 
-def calc_to_vertical(flag):
+def calc_to_vertical(flag: str):
+    """
+    Calculates bone coordinates for vertical rotation.
+    :param flag: 'right' | 'left'
+    :return: None
+    """
     if flag == 'left':
         for bone in bones:
             if bone.rect.center[0] <= 100 and bone.rect.center[1] == 450:
@@ -251,7 +277,12 @@ def calc_to_vertical(flag):
                 break
 
 
-def calc_to_horizont(flag):
+def calc_to_horizont(flag: str):
+    """
+    Calculates bone coordinates for horizontal rotation.
+    :param flag: 'right' | 'left'
+    :return: None
+    """
     if flag == 'left':
         for bone in bones:
             if bone.rect.center[1] <= 250 and bone.rect.center[0] == 50:
@@ -273,7 +304,12 @@ def calc_to_horizont(flag):
                 break
 
 
-def left_side(bone):
+def left_side(bone: Bone):
+    """
+    Places the dice on the game table on the left side of the board.
+    :param bone: Bone
+    :return: None
+    """
     if dict_of_endpoints['end_point_coord']['left'][0] >= 50 \
             and dict_of_endpoints['end_point_coord']['left'][1] == 450:
         horizont_turn_1(bone, 'left')
@@ -288,7 +324,12 @@ def left_side(bone):
         horizont_turn_2(bone, 'left')
 
 
-def right_side(bone):
+def right_side(bone: Bone):
+    """
+    Places the dice on the game table on the right side of the board.
+    :param bone: Bone
+    :return: None
+    """
     if dict_of_endpoints['end_point_coord']['right'][0] <= 1200 \
             and dict_of_endpoints['end_point_coord']['right'][1] == 450:
         horizont_turn_1(bone, 'right')
@@ -303,7 +344,12 @@ def right_side(bone):
         horizont_turn_2(bone, 'right')
 
 
-def player_move(x_pos):
+def player_move(x_pos: int):
+    """
+    Player's move. Places the dice on the game table depending on where the player clicked the table.
+    :param x_pos: int
+    :return: None
+    """
     for bone in player_group:
         if bone.rect.topleft[1] == 780:
             empty_coord_player.insert(0, (bone.rect.topleft[0], bone.rect.topleft[1] + 10))
@@ -332,6 +378,11 @@ def player_move(x_pos):
 
 
 def first_move():
+    """
+    The first move when you press space. The smallest double moves. If neither the player nor the robot has any doubles,
+     the table is dealt again.
+    :return: None
+    """
     space = True
     while space:
         if dict_of_endpoints['end_point_coord']['left'] != (0, 0):
@@ -395,7 +446,13 @@ def first_move():
                         break
 
 
-def movie_from_bar(x_pos, y_pos):
+def movie_from_bar(x_pos: int, y_pos: int):
+    """
+    Moves a bone from the bar into the player's space.
+    :param x_pos: int
+    :param y_pos: int
+    :return: None
+    """
     for bone in bar_group:
         if bone.rect.collidepoint(x_pos, y_pos):
             bone.remove(bar_group)
@@ -413,16 +470,22 @@ def movie_from_bar(x_pos, y_pos):
             break
 
 
-def robot_move(robot_bone, flag):
-    empty_coord_robot.insert(0, (robot_bone.rect.topleft[0], robot_bone.rect.topleft[1]))
+def robot_move(bone: Bone, flag: str):
+    """
+    The robot moves after the player's move or if the player has no bone to move and the bar is empty.
+    :param bone: Bone
+    :param flag: 'right' | 'left'
+    :return: None
+    """
+    empty_coord_robot.insert(0, (bone.rect.topleft[0], bone.rect.topleft[1]))
     bg = Bg('t')
-    bg.rect.topleft = robot_bone.rect.topleft
-    robot_bone.remove(robot_group)
-    robot_list.remove(robot_bone.nominal)
+    bg.rect.topleft = bone.rect.topleft
+    bone.remove(robot_group)
+    robot_list.remove(bone.nominal)
     if flag == 'left':
-        left_side(robot_bone)
+        left_side(bone)
     if flag == 'right':
-        right_side(robot_bone)
+        right_side(bone)
     screen.blit(bg.image, bg.rect)
     pygame.display.update(bg.rect)
 
@@ -435,6 +498,9 @@ def robot_move(robot_bone, flag):
 
 
 def robot_from_bar():
+    """
+    Moves a bone from the bar into the robot's space.
+    """
     try:
         nom_bar = random.choice(bar_list)
     except IndexError:
@@ -458,6 +524,10 @@ def robot_from_bar():
 
 
 def robot_find_to_move():
+    """
+    The robot chooses a random chip to move from the matching ones.
+    :return:
+    """
     if len(player_list) != 0:
         ready_to_move = []
         for nom in robot_list:
@@ -494,7 +564,7 @@ def robot_find_to_move():
         pass
 
 
-def print_text(message, x, y, font_color=(0, 0, 0), font_type='arial', font_size=30, long=250):
+def print_text(message:str, x: int, y: int, font_color=(0, 0, 0), font_type='arial', font_size=30, long=250):
     font_type = pygame.font.SysFont(font_type, font_size)
     text = font_type.render(message, True, font_color)
     text_rect = text.get_rect()
@@ -508,7 +578,17 @@ def print_text(message, x, y, font_color=(0, 0, 0), font_type='arial', font_size
     pygame.display.update([text_area_rect, text_rect])
 
 
-def fish(p_count, r_count, player_count_list, robot_count_list, score):
+def fish(p_count: int, r_count: int, player_count_list: list, robot_count_list: list, score: bool) ->\
+        tuple[bool, bool, int, int]:
+    """
+    A "fish" situation is defined. Scoring.
+    :param p_count: player's count
+    :param r_count: robot's count
+    :param player_count_list: list of player's bones definition
+    :param robot_count_list: list of robot's bones definition
+    :param score: is it scoring or not
+    :return: bool, score, p_count, r_count
+    """
     if dict_of_endpoints['end_point_nominal']['left'] not in robot_count_list\
             and dict_of_endpoints['end_point_nominal']['left'] not in player_count_list\
             and dict_of_endpoints['end_point_nominal']['right'] not in robot_count_list\
@@ -539,7 +619,17 @@ def fish(p_count, r_count, player_count_list, robot_count_list, score):
         return True, score, p_count, r_count
 
 
-def count(p_count, r_count, player_count_list, robot_count_list, no_fish):
+def count(p_count: int, r_count: int, player_count_list: list, robot_count_list: list, no_fish: bool) ->\
+        tuple[bool, int, int]:
+    """
+    Scoring.
+    :param p_count: player's count
+    :param r_count: robot's count
+    :param player_count_list: list of player's bones definition
+    :param robot_count_list: list of robot's bones definition
+    :param no_fish: is it fish or not
+    :return: bool, p_count, r_count
+    """
     if no_fish is True:
         p_count += sum(player_count_list)
         r_count += sum(robot_count_list)
@@ -552,6 +642,10 @@ def count(p_count, r_count, player_count_list, robot_count_list, no_fish):
 
 
 def new_table():
+    """
+    New bones distribution.
+    :return: None
+    """
     dict_of_endpoints['end_point_coord']['left'] = 0, 0
     dict_of_endpoints['end_point_coord']['right'] = 0, 0
     dict_of_endpoints['end_point_nominal']['left'] = 0

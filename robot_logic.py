@@ -56,18 +56,14 @@ def choice_nom_to_move(ready_to_move: list, robot_list: list, dict_nominal: list
     :return:
     """
     noms_to_move = calc_noms_to_move(ready_to_move, robot_list)
-    print(noms_to_move)
     max_digits = calc_max_entries(ready_to_move, robot_list)
-    print(max_digits)
     if dict_nominal[0] == dict_nominal[1]:
         return random.choice(noms_to_move), random.choice(['left', 'right'])
     else:
         for nom in noms_to_move:
             if dict_nominal[0] not in max_digits and dict_nominal[0] in nom:
-                print(type(nom))
                 return nom, 'left'
             elif dict_nominal[1] not in max_digits and dict_nominal[1] in nom:
-                print(type(nom))
                 return nom, 'right'
             elif dict_nominal[0] in nom:
                 return nom, 'left'

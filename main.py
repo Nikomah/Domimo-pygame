@@ -1,7 +1,7 @@
 
-import random
 from objects import *
 import pygame
+from robot_logic import *
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -79,7 +79,7 @@ def draw_robot_room():
                 robot_list.append(b.nominal)
                 b.add(robot_group)
                 b.rect.topleft = robot_coords[robot_flag]
-                screen.blit(b.back_image, b.rect)
+                screen.blit(b.image, b.rect)
                 robot_flag += 1
     del robot_coords
     del last_list
@@ -517,7 +517,7 @@ def robot_from_bar():
             bone.rect.topleft = coord
             bone.add(robot_group)
             bone.remove(bar_group)
-            screen.blit(bone.back_image, bone.rect)
+            screen.blit(bone.image, bone.rect)
             screen.blit(bg.image, bg.rect)
             pygame.display.update([bone.rect, bg.rect])
             break
@@ -526,25 +526,20 @@ def robot_from_bar():
 def robot_find_to_move():
     """
     The robot chooses a random chip to move from the matching ones.
-    :return:
+    :return: None
     """
     if len(player_list) != 0:
         ready_to_move = []
+        dict_nominal = list(dict_of_endpoints['end_point_nominal'].values())
         for nom in robot_list:
-            if dict_of_endpoints['end_point_nominal']['left'] in nom \
-                    or dict_of_endpoints['end_point_nominal']['right'] in nom:
+            if dict_nominal[0] in nom \
+                    or dict_nominal[1] in nom:
                 ready_to_move.append(nom)
         if len(ready_to_move) > 0:
-            try:
-                nom_to_move = random.choice(ready_to_move)
-            except IndexError:
-                nom_to_move = None
+            nom_to_move, flag = choice_nom_to_move(ready_to_move, robot_list, dict_nominal)
             for bone in robot_group:
                 if bone.nominal == nom_to_move:
-                    if dict_of_endpoints['end_point_nominal']['left'] in bone.nominal:
-                        robot_move(bone, 'left')
-                    else:
-                        robot_move(bone, 'right')
+                    robot_move(bone, flag)
                     break
         elif len(bar_list) == 0:
             print_text('PASS', 620, 300)
@@ -564,7 +559,7 @@ def robot_find_to_move():
         pass
 
 
-def print_text(message:str, x: int, y: int, font_color=(0, 0, 0), font_type='arial', font_size=30, long=250):
+def print_text(message: str, x: int, y: int, font_color=(0, 0, 0), font_type='arial', font_size=30, long=250):
     font_type = pygame.font.SysFont(font_type, font_size)
     text = font_type.render(message, True, font_color)
     text_rect = text.get_rect()

@@ -379,6 +379,55 @@ def player_move(x_pos: int):
     robot_find_to_move()
 
 
+def player_double(p: int):
+    for bone in player_group:
+        if bone.nominal == (p, p):
+            bone.remove(player_group)
+            player_list.remove(bone.nominal)
+            empty_coord_player.insert(0, bone.rect.topleft)
+            bg = Bg('t', table_color, bar_color)
+            bg.rect.topleft = bone.rect.topleft
+            dict_of_endpoints['end_point_nominal']['left'] = bone.nominal[0]
+            dict_of_endpoints['end_point_nominal']['right'] = bone.nominal[1]
+            dict_of_endpoints['end_point_coord']['left'] = (625 - 75), 450
+            dict_of_endpoints['end_point_coord']['right'] = (625 + 75), 450
+            bone.rect.center = (625, 450)
+            screen.blit(bone.image, bone.rect)
+            screen.blit(bg.image, bg.rect)
+            pygame.display.update([bone.rect, bg.rect])
+            break
+
+
+def robot_double(r: int):
+    for bone in robot_group:
+        if bone.nominal == (r, r):
+            bone.remove(robot_group)
+            robot_list.remove(bone.nominal)
+            empty_coord_robot.insert(0, bone.rect.topleft)
+            bg = Bg('t', table_color, bar_color)
+            bg.rect.topleft = bone.rect.topleft
+            dict_of_endpoints['end_point_nominal']['left'] = bone.nominal[0]
+            dict_of_endpoints['end_point_nominal']['right'] = bone.nominal[1]
+            dict_of_endpoints['end_point_coord']['left'] = (625 - 75), 450
+            dict_of_endpoints['end_point_coord']['right'] = (625 + 75), 450
+            bone.rect.center = (625, 450)
+            screen.blit(bone.image, bone.rect)
+            screen.blit(bg.image, bg.rect)
+            pygame.display.update([bone.rect, bg.rect])
+            break
+
+
+def no_doubles():
+    print_text('NO DOUBLES', 550, 450)
+    pygame.time.delay(1000)
+    text_area = pygame.Surface((250, 30))
+    text_area.fill(color=table_color)
+    text_rect = text_area.get_rect()
+    text_rect.topleft = 550, 450
+    screen.blit(text_area, text_rect)
+    new_table()
+
+
 def first_move():
     """
     The first move when you press space. The smallest double moves. If neither the player nor the robot has any doubles,
@@ -407,50 +456,15 @@ def first_move():
             except ValueError:
                 r = 7
             if p < r:
-                for bone in player_group:
-                    if bone.nominal == (p, p):
-                        bone.remove(player_group)
-                        player_list.remove(bone.nominal)
-                        empty_coord_player.insert(0, bone.rect.topleft)
-                        bg = Bg('t', table_color, bar_color)
-                        bg.rect.topleft = bone.rect.topleft
-                        dict_of_endpoints['end_point_nominal']['left'] = bone.nominal[0]
-                        dict_of_endpoints['end_point_nominal']['right'] = bone.nominal[1]
-                        dict_of_endpoints['end_point_coord']['left'] = (625 - 75), 450
-                        dict_of_endpoints['end_point_coord']['right'] = (625 + 75), 450
-                        bone.rect.center = (625, 450)
-                        screen.blit(bone.image, bone.rect)
-                        screen.blit(bg.image, bg.rect)
-                        pygame.display.update([bone.rect, bg.rect])
-                        break
+                player_double(p)
+
                 pygame.time.delay(1000)
                 robot_find_to_move()
             elif p == r:
-                print_text('NO DOUBLES', 550, 450)
-                pygame.time.delay(1000)
-                text_area = pygame.Surface((250, 30))
-                text_area.fill(color=table_color)
-                text_rect = text_area.get_rect()
-                text_rect.topleft = 550, 450
-                screen.blit(text_area, text_rect)
-                new_table()
+                no_doubles()
+
             else:
-                for bone in robot_group:
-                    if bone.nominal == (r, r):
-                        bone.remove(robot_group)
-                        robot_list.remove(bone.nominal)
-                        empty_coord_robot.insert(0, bone.rect.topleft)
-                        bg = Bg('t', table_color, bar_color)
-                        bg.rect.topleft = bone.rect.topleft
-                        dict_of_endpoints['end_point_nominal']['left'] = bone.nominal[0]
-                        dict_of_endpoints['end_point_nominal']['right'] = bone.nominal[1]
-                        dict_of_endpoints['end_point_coord']['left'] = (625 - 75), 450
-                        dict_of_endpoints['end_point_coord']['right'] = (625 + 75), 450
-                        bone.rect.center = (625, 450)
-                        screen.blit(bone.image, bone.rect)
-                        screen.blit(bg.image, bg.rect)
-                        pygame.display.update([bone.rect, bg.rect])
-                        break
+                robot_double(r)
 
 
 def movie_from_bar(x_pos: int, y_pos: int):

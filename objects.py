@@ -22,13 +22,13 @@ class Bone(pygame.sprite.Sprite):
 
 
 class Bg(pygame.sprite.Sprite):
-    def __init__(self, flag: str):
+    def __init__(self, flag: str, table_color: str, bar_color: str):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((50, 100))
         if flag == 't':
-            self.image.fill(color='aquamarine4')
+            self.image.fill(color=table_color)
         if flag == 'b':
-            self.image.fill(color='cyan3')
+            self.image.fill(color=bar_color)
         self.rect = self.image.get_rect()
         self.add(bgs)
 

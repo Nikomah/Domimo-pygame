@@ -6,7 +6,9 @@ from robot_logic import *
 pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((1500, 900))
-screen.fill(color='aquamarine4')
+table_color = 'aquamarine4'
+bar_color = 'cyan3'
+screen.fill(color=table_color)
 
 dict_of_endpoints = {'end_point_nominal': {'left': 0, 'right': 0},
                      'end_point_coord': {'left': (0, 0), 'right': (0, 0)}
@@ -26,7 +28,7 @@ empty_coord_robot = [(x, 10) for x in range(520, 1320, 60)]  # Coordinates of em
 
 def draw_bar_space():
     bar_space = pygame.Surface((250, 500))
-    bar_space.fill(color='cyan3')
+    bar_space.fill(color=bar_color)
     bar_space_rect = bar_space.get_rect()
     bar_space_rect.topleft = (1250, 200)
     screen.blit(bar_space, bar_space_rect)
@@ -99,7 +101,7 @@ def player_click(x_pos: int, y_pos: int):
     """
     for bone in player_group:
         if bone.rect.topleft[1] == 780:
-            bg = Bg('t')
+            bg = Bg('t', table_color, bar_color)
             bg.rect.topleft = bone.rect.topleft
             screen.blit(bg.image, bg.rect)
             bone.rect.move_ip(0, 10)
@@ -109,7 +111,7 @@ def player_click(x_pos: int, y_pos: int):
             if bone.rect.collidepoint(x_pos, y_pos):
                 if bone.nominal[0] in dict_of_endpoints['end_point_nominal'].values()\
                         or bone.nominal[1] in dict_of_endpoints['end_point_nominal'].values():
-                    bg = Bg('t')
+                    bg = Bg('t', table_color, bar_color)
                     bg.rect.topleft = bone.rect.topleft
                     screen.blit(bg.image, bg.rect)
                     bone.rect.move_ip(0, -10)
@@ -353,7 +355,7 @@ def player_move(x_pos: int):
     for bone in player_group:
         if bone.rect.topleft[1] == 780:
             empty_coord_player.insert(0, (bone.rect.topleft[0], bone.rect.topleft[1] + 10))
-            bg = Bg('t')
+            bg = Bg('t', table_color, bar_color)
             bg.rect.topleft = bone.rect.topleft
             bone.remove(player_group)
             player_list.remove(bone.nominal)
@@ -410,7 +412,7 @@ def first_move():
                         bone.remove(player_group)
                         player_list.remove(bone.nominal)
                         empty_coord_player.insert(0, bone.rect.topleft)
-                        bg = Bg('t')
+                        bg = Bg('t', table_color, bar_color)
                         bg.rect.topleft = bone.rect.topleft
                         dict_of_endpoints['end_point_nominal']['left'] = bone.nominal[0]
                         dict_of_endpoints['end_point_nominal']['right'] = bone.nominal[1]
@@ -426,6 +428,11 @@ def first_move():
             elif p == r:
                 print_text('NO DOUBLES', 550, 450)
                 pygame.time.delay(1000)
+                text_area = pygame.Surface((250, 30))
+                text_area.fill(color=table_color)
+                text_rect = text_area.get_rect()
+                text_rect.topleft = 550, 450
+                screen.blit(text_area, text_rect)
                 new_table()
             else:
                 for bone in robot_group:
@@ -433,7 +440,7 @@ def first_move():
                         bone.remove(robot_group)
                         robot_list.remove(bone.nominal)
                         empty_coord_robot.insert(0, bone.rect.topleft)
-                        bg = Bg('t')
+                        bg = Bg('t', table_color, bar_color)
                         bg.rect.topleft = bone.rect.topleft
                         dict_of_endpoints['end_point_nominal']['left'] = bone.nominal[0]
                         dict_of_endpoints['end_point_nominal']['right'] = bone.nominal[1]
@@ -457,7 +464,7 @@ def movie_from_bar(x_pos: int, y_pos: int):
         if bone.rect.collidepoint(x_pos, y_pos):
             bone.remove(bar_group)
             bar_list.remove(bone.nominal)
-            bg = Bg('b')
+            bg = Bg('b', table_color, bar_color)
             bg.rect.topleft = bone.rect.topleft
             coord = empty_coord_player[0]
             empty_coord_player.pop(0)
@@ -478,7 +485,7 @@ def robot_move(bone: Bone, flag: str):
     :return: None
     """
     empty_coord_robot.insert(0, (bone.rect.topleft[0], bone.rect.topleft[1]))
-    bg = Bg('t')
+    bg = Bg('t', table_color, bar_color)
     bg.rect.topleft = bone.rect.topleft
     bone.remove(robot_group)
     robot_list.remove(bone.nominal)
@@ -512,7 +519,7 @@ def robot_from_bar():
         if bone.nominal == nom_bar:
             coord = empty_coord_robot[0]
             del empty_coord_robot[0]
-            bg = Bg('b')
+            bg = Bg('b', table_color, bar_color)
             bg.rect.topleft = bone.rect.topleft
             bone.rect.topleft = coord
             bone.add(robot_group)
@@ -525,7 +532,7 @@ def robot_from_bar():
 
 def robot_find_to_move():
     """
-    The robot chooses a random chip to move from the matching ones.
+    The robot chooses a chip to move from the matching ones.
     :return: None
     """
     if len(player_list) != 0:
@@ -546,7 +553,7 @@ def robot_find_to_move():
             pass_ = pygame.Surface((100, 50))
             pass_rect = pass_.get_rect()
             pass_rect.topleft = 620, 300
-            pass_.fill(color='aquamarine4')
+            pass_.fill(color=table_color)
             pygame.time.delay(1000)
             screen.blit(pass_, pass_rect)
             pygame.display.update(pass_rect)
@@ -565,7 +572,7 @@ def print_text(message: str, x: int, y: int, font_color=(0, 0, 0), font_type='ar
     text_rect = text.get_rect()
     text_rect.topleft = x, y
     text_area = pygame.Surface((long, font_size))
-    text_area.fill(color='aquamarine4')
+    text_area.fill(color=table_color)
     text_area_rect = text_area.get_rect()
     text_area_rect.topleft = x, y
     screen.blit(text_area, text_area_rect)
@@ -693,7 +700,7 @@ def run():
 
         if score:
             if len(player_list) == 0 or len(robot_list) == 0 or no_fish is False:
-                screen.fill(color='aquamarine4')
+                screen.fill(color=table_color)
                 score, player_count, robot_count = count(player_count, robot_count,
                                                          player_count_list, robot_count_list, no_fish)
                 if score:
@@ -715,22 +722,22 @@ def run():
             if event.type == pygame.VIDEOEXPOSE:  # Window minimization/open
                 pygame.display.update()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:  # Press Enter
+                if event.key == pygame.K_SPACE:  # Press Space
                     text_area = pygame.Surface((500, 30))
-                    text_area.fill(color='aquamarine4')
+                    text_area.fill(color=table_color)
                     text_rect = text_area.get_rect()
                     text_rect.topleft = 500, 450
                     screen.blit(text_area, text_rect)
                     pygame.display.update(text_rect)
                     first_move()
-                if event.key == pygame.K_RETURN and game is False:
+                if event.key == pygame.K_RETURN and game is False:  # Press Enter
                     player_count = 0
                     robot_count = 0
                     score = True
                     no_fish = True
-                    screen.fill(color='aquamarine4')
+                    screen.fill(color=table_color)
                     new_table()
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 x, y = event.pos
                 if y > 780:  # Player's room
                     player_click(x, y)
@@ -739,7 +746,12 @@ def run():
                 elif 0 < x < 1250 and 110 < y < 790\
                         and (dict_of_endpoints['end_point_nominal']['left'] in player_count_list or
                              dict_of_endpoints['end_point_nominal']['right'] in player_count_list):  # Main table
-                    player_move(x)
+                    bone = False
+                    for b in player_group:
+                        if b.rect.topleft[1] == 780:
+                            bone = True
+                    if bone:
+                        player_move(x)
 
         clock.tick(15)
 

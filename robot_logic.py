@@ -53,8 +53,10 @@ def choice_nom_to_move(ready_to_move: list, robot_list: list, dict_nominal: list
     :param ready_to_move: list
     :param robot_list: list
     :param dict_nominal: list, End denominations on the gaming table
-    :return:
+    :return: tuple & str
     """
+    bone = None
+    flag = None
     noms_to_move = calc_noms_to_move(ready_to_move, robot_list)
     max_digits = calc_max_entries(ready_to_move, robot_list)
     if dict_nominal[0] == dict_nominal[1]:
@@ -62,10 +64,16 @@ def choice_nom_to_move(ready_to_move: list, robot_list: list, dict_nominal: list
     else:
         for nom in noms_to_move:
             if dict_nominal[0] not in max_digits and dict_nominal[0] in nom:
-                return nom, 'left'
+                bone = nom
+                flag = 'left'
             elif dict_nominal[1] not in max_digits and dict_nominal[1] in nom:
-                return nom, 'right'
-            elif dict_nominal[0] in nom:
-                return nom, 'left'
-            else:
-                return nom, 'right'
+                bone = nom
+                flag = 'right'
+        if bone:
+            return bone, flag
+        else:
+            for nom in noms_to_move:
+                if dict_nominal[0] in nom:
+                    return nom, 'left'
+                else:
+                    return nom, 'right'

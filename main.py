@@ -81,7 +81,7 @@ def draw_robot_room():
                 robot_list.append(b.nominal)
                 b.add(robot_group)
                 b.rect.topleft = robot_coords[robot_flag]
-                screen.blit(b.image, b.rect)
+                screen.blit(b.back_image, b.rect)
                 robot_flag += 1
     del robot_coords
     del last_list
@@ -538,7 +538,7 @@ def robot_from_bar():
             bone.rect.topleft = coord
             bone.add(robot_group)
             bone.remove(bar_group)
-            screen.blit(bone.image, bone.rect)
+            screen.blit(bone.back_image, bone.rect)
             screen.blit(bg.image, bg.rect)
             pygame.display.update([bone.rect, bg.rect])
             break
